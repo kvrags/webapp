@@ -20,8 +20,8 @@ self.addEventListener("install", function (event) {
                after making HTTP requests for each of them.
             */
             return cache.addAll([
-              './index.html',
-              './sw.js',
+              '/index.html',
+              '/sw.js',
             ]);
         })
       .then(function () {
