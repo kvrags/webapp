@@ -1,12 +1,11 @@
-/*
-Ref site https://css-tricks.com/serviceworker-for-offline/
-*/
 var version = 'MyfirstCache_v1.0.0.1';
 
 self.addEventListener("install", function (event) {
     console.log('WORKER: install event in progress.');
     event.waitUntil(
-      /* The caches built-in is a promise-based API that helps you cache responses,
+      /*
+         Ref site https://css-tricks.com/serviceworker-for-offline/
+         The caches built-in is a promise-based API that helps you cache responses,
          as well as finding and deleting them.
       */
       caches
@@ -28,7 +27,7 @@ self.addEventListener("install", function (event) {
             ]);
         })
       .then(function () {
-          console.log('WORKER: install completed');
+          console.log('WORKER: In install Event; Cache Creation completed');
       })
   );
 });
