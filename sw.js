@@ -20,8 +20,9 @@ self.addEventListener("install", function (event) {
                after making HTTP requests for each of them.
             */
             return cache.addAll([
-              './index.html',
-              './sw.js',
+              './res/push.css',
+              './res/ic_more_vert_white_24px.svg',
+              './res/libs.min.js',
             ]);
         })
       .then(function () {
