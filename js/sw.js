@@ -22,9 +22,9 @@ self.addEventListener("install", function (event) {
             */
             return cache.addAll([
                 '/',
-              './res/push.css',
-              './res/ic_more_vert_white_24px.svg',
-              './res/libs.min.js',
+              '/res/push.css',
+              '/res/ic_more_vert_white_24px.svg',
+              '/res/libs.min.js',
             ]);
         })
       .then(function () {
