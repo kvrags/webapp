@@ -1,0 +1,29 @@
+
+
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <title>Servcie Worker Page</title>
+    <p> Hello World!</p>
+    <div> <a href="./sw/index.html"> Service Workers </a>!!</div>
+
+
+    <script>
+            if('serviceWorker' in navigator) {
+              navigator.serviceWorker
+                       .register('./sw.js')
+                       .then(function () {
+                           console.log("Service Worker Registered");
+                       });
+            }else{
+                console.log("No Service Worker Support in the Browser!");
+            }
+    </script>
+</body>
+</html>
