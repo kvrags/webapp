@@ -1,0 +1,224 @@
+﻿    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+                font-size: 17px;
+            }
+
+                /* Change background color of buttons on hover */
+                div.tab button:hover {
+                    background-color: #ddd;
+                }
+
+                /* Create an active/current tablink class */
+                div.tab button.active {
+                    background-color: #ccc;
+                }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+        /* Style the Table*/
+        table, th, td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+            font-size:large;
+            text-align:center
+        }
+
+            table tr:nth-child(odd) {
+                background-color: #f1f1f1;
+            }
+
+            table tr:nth-child(even) {
+                background-color: #ffffff;
+            }
+    </style>
+
+    <p>Click on the buttons inside the tabbed menu:</p>
+
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'users')">Users</button>
+        <button class="tablinks" onclick="openTab(event, 'questions')">Questions</button>
+        <button class="tablinks" onclick="openTab(event, 'survey')">Survey</button>
+    </div>
+
+    <div id="users" class="tabcontent">
+        <h3>Manage Users</h3>
+        <p>Here you manage users.</p>
+    </div>
+
+    <div id="questions" class="tabcontent" ng-controller="ctrladminQuestions">
+     
+        <div>
+            <input type="radio" name="selectQ"  ng-click="selectMode('create')" checked> <label>Create New</label>            
+            <input type="radio" name="selectQ"  ng-click="selectMode('modify')"> <label>Modify</label>
+        </div>
+     <div class="container" ng-hide="selectQ">
+         <h3>Create new Assessment Questions</h3>
+        <form class="form-horizontal" name="form" novalidate>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Choose a Cognitive Domain</label>
+                </div>
+                <div class="col-md-5">
+                    <select name="domain" class="form-control" ng-model="model.domain" ng-required="true">
+                        <option value="Attention">Attention</option>
+                        <option value="Working Memory">Working Memory</option>
+                        <option value="Implusivity">Implusivity</option>
+                        <option value="Mental Flexibility">Mental Flexibility</option>
+                    </select>
+
+                    <div class="alert alert-danger" ng-show="(form.domain.$touched || form.$submitted) && form.domain.$error.required">
+                        Cognitive Domain is required
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>New Question</label>
+                </div>
+                <div class="col-md-5">
+                    <textarea style="border:ridge" name="qText" ng-model="model.qText" rows="4" cols="70" style="align-content:stretch"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Response Options</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Never</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" name="Never" ng-model="model.Never" required>
+                    <div class="alert alert-danger" ng-show="(form.Never.$touched || form.$submitted) && form.Never.$error.required">
+                        Weightage for 'Never' option is required
+                    </div>
+                </div>
+                </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Rarely</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" name="Rarely" ng-model="model.Rarely" required>
+                    <div class="alert alert-danger" ng-show="(form.Rarely.$touched || form.$submitted) && form.Rarely.$error.required">
+                        Weightage for 'Rarely' option is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Sometimes</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" name="Sometimes" ng-model="model.Sometimes" required>
+                    <div class="alert alert-danger" ng-show="(form.Rarely.$touched || form.$submitted) && form.Rarely.$error.required">
+                        Weightage for 'Sometimes' option is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Most often</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" name="Mostoften" ng-model="model.Mostoften" required>
+                    <div class="alert alert-danger" ng-show="(form.Mostoften.$touched || form.$submitted) && form.Mostoften.$error.required">
+                        Weightage for 'Most often' option is required
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-2">
+                    <label>Always</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" name="Always" ng-model="model.Always" required>
+                    <div class="alert alert-danger" ng-show="(form.Always.$touched || form.$submitted) && form.Always.$error.required">
+                        Weightage for 'Always' option is required
+                    </div>
+                </div>
+            </div>
+
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-5">
+                        <input type="submit" value="Create" class="btn btn-primary" ng-click="createQuestion(model)" ng-disabled="form.$invalid" />
+                    </div>
+                </div>
+
+</form>
+         <pre>{{message | json}}</pre>
+    </div>
+        <div class="container" ng-hide="!selectQ">
+        <p> modify Questions here</p>
+        </div>
+
+        </div>
+
+    <div id="survey" class="tabcontent" ng-controller="ctrladminSurvey">
+        <h3>Listing all the {{survey.length}} Survey Responses : </h3>
+
+        <table>
+            <th>Name</th><th> Age </th> <th> Attention</th> <th>Working Memory </th><th>Implusivity</th>
+            <th>Mental Flexibility</th><th>Total Score</th>
+            <tr ng-repeat="user in survey track by $index" >
+                <td>{{user["username"]}}</td>
+                <td>{{user["age"]}}</td>
+                <td>{{user["Attention"]}}</td>
+                <td>{{user["Working Memory"]}}</td>
+                <td>{{user["Implusivity"]}}</td>
+                <td>{{user["Mental Flexibility"]}}</td>
+                <td>{{user["Total"]}}</td>
+            </tr>
+        </table>
+        <!--<pre> {{survey | json}} </pre>-->
+
+        </div>
+        </>
+
+        <script>
+            function openTab(evt, evtName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(evtName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+        </script>
+
+        <script src="./js/ng.js"></script>
