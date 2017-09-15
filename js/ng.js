@@ -166,11 +166,17 @@ rootApp.controller('ctrlConnectShapes', function ($scope) {
 
 //admin adminSurvey
 rootApp.controller('ctrladminSurvey', function ($scope) {
-    $scope.message = {};// = 'Hello from ctrladminSurvey';
+    $http.get('./assets/survey.json')
+        .then(function (res) {
+            $scope.survey = res.data;
+        });
+    
+    /*$scope.message = {};// = 'Hello from ctrladminSurvey';
 
     $scope.survey = {};
         
     $scope.survey = readLocalStorageJson("survey");
+    */
 });
 
 rootApp.controller('ctrladminQuestions', function ($scope) {
