@@ -165,45 +165,55 @@ rootApp.controller('ctrlConnectShapes', function ($scope) {
 });
 
 //admin adminSurvey
-rootApp.controller('ctrladminSurvey', function ($scope) {
+rootApp.controller('ctrladminSurvey', function ($scope,$http) {
+
+/*    //readin from file when hosted on a server
     $http.get('./assets/survey.json')
         .then(function (res) {
             $scope.survey = res.data;
         });
-    
-    /*$scope.message = {};// = 'Hello from ctrladminSurvey';
+  */      
+
+    $scope.message = {};// = 'Hello from ctrladminSurvey';
 
     $scope.survey = {};
         
     $scope.survey = readLocalStorageJson("survey");
-    */
+    
+
 });
 
 rootApp.controller('ctrladminQuestions', function ($scope) {
     $scope.question = [];
 
     $scope.selectMode = function (mode){
-        if (mode == "create")
+        if (mode == "create"){
             $scope.selectQ = false;
-        else
+            
+            $scope.createQuestion = function (model)
+            {
+                $scope.question = {
+                    'domain': model.domain,
+                    'qText': model.qText,
+                    'Never': model.Never,
+                    'Rarely': model.Rarely,
+                    'Sometimes': model.Sometimes,
+                    'MostOften': model.Mostoften,
+                    'Always': model.Always
+                };
+
+                $scope.message = $scope.question;
+                writeLocalStorageJson("question", $scope.question);
+            }
+    
+
+        } else {
             $scope.selectQ = true;
+            $scope.questions = readLocalStorageJson("question");
+        }
     };
 
-    $scope.createQuestion = function (model)
-    {
-        $scope.question = {
-            'domain': model.domain,
-            'qText': model.qText,
-            'Never': model.Never,
-            'Rarely': model.Rarely,
-            'Sometimes': model.Sometimes,
-            'Most Often': model.Mostoften,
-            'Always': model.Always
-        };
-
-        $scope.message = $scope.question;
-        writeLocalStorageJson("question", $scope.question);
-    }
+    
 });
 
 //rootApp.controller('ctrlAssesment', ['$scope', '$rootScope', function ($scope, $rootScope) {
@@ -261,9 +271,9 @@ rootApp.controller('ctrlAssesment', function ($scope) {
             'age': '', //res.age,
             'created' :'',//assigned just after completing all the Qs and just before saving to storage
             'Attention': $scope.attention,
-            'Working Memory':$scope.workingMemory,
+            'WorkingMemory':$scope.workingMemory,
             'Implusivity':$scope.implusivity,
-            'Mental Flexibility': $scope.mentalFlexibility,
+            'MentalFlexibility': $scope.mentalFlexibility,
             'Total' : $scope.attention + $scope.workingMemory+$scope.implusivity+$scope.mentalFlexibility   
         };
 
