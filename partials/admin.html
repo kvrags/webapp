@@ -59,7 +59,7 @@
 
     <p>Click on the buttons inside the tabbed menu:</p>
 
-    <div class="tab">
+    <div class="tab" >
         <button class="tablinks" onclick="openTab(event, 'users')">Users</button>
         <button class="tablinks" onclick="openTab(event, 'questions')">Questions</button>
         <button class="tablinks" onclick="openTab(event, 'survey')">Survey</button>
@@ -71,13 +71,13 @@
     </div>
 
     <div id="questions" class="tabcontent" ng-controller="ctrladminQuestions">
-     
-        <div>
-            <input type="radio" name="selectQ"  ng-click="selectMode('create')" checked> <label>Create New</label>            
-            <input type="radio" name="selectQ"  ng-click="selectMode('modify')"> <label>Modify</label>
-        </div>
-     <div class="container" ng-hide="selectQ">
-         <h3>Create new Assessment Questions</h3>
+
+    <div>
+        <input type="radio" name="selectQ" ng-click="selectMode('create')" checked> <label>Create New</label>
+        <input type="radio" name="selectQ" ng-click="selectMode('modify')"> <label>Modify</label>
+    </div>
+    <div class="container" id="QCreate" ng-hide="selectQ">
+        <h3>Create new Assessment Questions</h3>
         <form class="form-horizontal" name="form" novalidate>
             <div class="form-group">
                 <div class="col-md-2">
@@ -121,7 +121,7 @@
                         Weightage for 'Never' option is required
                     </div>
                 </div>
-                </div>
+            </div>
             <div class="form-group">
                 <div class="col-md-2">
                     <label>Rarely</label>
@@ -169,21 +169,65 @@
 
 
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-5">
-                        <input type="submit" value="Create" class="btn btn-primary" ng-click="createQuestion(model)" ng-disabled="form.$invalid" />
-                    </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-5">
+                    <input type="submit" value="Create" class="btn btn-primary" ng-click="createQuestion(model)" ng-disabled="form.$invalid" />
                 </div>
+            </div>
 
-</form>
-         <pre>{{message | json}}</pre>
+        </form>
+
+            <!-- <pre>{{message | json}}</pre>-->
     </div>
-        <div class="container" ng-hide="!selectQ">
-        <p> modify Questions here</p>
-        </div>
 
-        </div>
 
+    <div class="container" id="QModify" ng-hide="!selectQ">
+        Total:{{questions.length}}
+        Attention:{{(questions| filter:domain='Attention').length}}
+        Working Memory:{{(questions| filter:domain='Working Memory').length}}
+        Implusivity:{{(questions| filter:domain='Implusivity').length}}
+        Mental Flexibility:{{(questions| filter:domain='Mental Flexibility').length}}
+        <table>
+            <tr>
+                <th width="30">Sl No.</th>
+                <th width="60"> Domain</th>
+                <th width="500">Assesment Question</th>
+                <th width="60">Never Weightage</th>
+                <th width="60">Rarely Weightage</th>
+                <th width="80">Sometimes Weightage</th>
+                <th width="80">Most Often Weightage</th>
+                <th width="80">Always Weightage</th>
+            </tr>
+
+            <tr ng-repeat="question in questions track by $index">
+                <td>
+                    {{$index +1}}
+                </td>
+                <td style="text-align:left">
+                    {{questions[$index].domain}}
+                </td>
+                <td style="text-align:left">
+                    {{questions[$index].qText}}
+                </td>
+                <td>
+                    {{questions[$index].Never}}
+                </td>
+                <td>
+                    {{questions[$index].Rarely}}
+                </td>
+                <td>
+                    {{questions[$index].Sometimes}}
+                </td>
+                <td>
+                    {{questions[$index].MostOften}}
+                </td>
+                <td>
+                    {{questions[$index].Always}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
     <div id="survey" class="tabcontent" ng-controller="ctrladminSurvey">
         <h3>Listing all the {{survey.length}} Survey Responses : </h3>
 
@@ -191,19 +235,18 @@
             <th>Name</th><th> Age </th> <th> Attention</th> <th>Working Memory </th><th>Implusivity</th>
             <th>Mental Flexibility</th><th>Total Score</th>
             <tr ng-repeat="user in survey track by $index" >
-                <td>{{user["username"]}}</td>
-                <td>{{user["age"]}}</td>
-                <td>{{user["Attention"]}}</td>
-                <td>{{user["Working Memory"]}}</td>
-                <td>{{user["Implusivity"]}}</td>
-                <td>{{user["Mental Flexibility"]}}</td>
-                <td>{{user["Total"]}}</td>
+                <td>{{user.username}}</td>
+                <td>{{user.age}}</td>
+                <td>{{user.Attention}}</td>
+                <td>{{user.WorkingMemory}}</td>
+                <td>{{user.Implusivity}}</td>
+                <td>{{user.MentalFlexibility}}</td>
+                <td>{{user.Total}}</td>
             </tr>
         </table>
-        <!--<pre> {{survey | json}} </pre>-->
+        <!--<pre> {{survey | json}} </pre> -->
 
-        </div>
-        </>
+    </div>
 
         <script>
             function openTab(evt, evtName) {
