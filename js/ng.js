@@ -129,10 +129,11 @@ rootApp.controller('ctrlAbout', function ($scope) {
     $scope.message = 'Hello from AboutController';
 });
 
+
 rootApp.controller('ctrlAdmin', function ($scope) {
     $scope.message = 'Hello from AdminController';
-
-    b_QuestionModal = true;
+    /*
+    _QuestionModal = true;
     b_UsersModal = true;
 
 
@@ -157,10 +158,122 @@ rootApp.controller('ctrlAdmin', function ($scope) {
         alert(model.domain + ";" + model.question + ";" + model.weightage);
 
     }
+    */
 });
 
+/*
 rootApp.controller('ctrlConnectShapes', function ($scope) {
     $scope.message = 'Hello from ctrlConnectShapes';
+
+});
+*/
+
+
+// Profies
+
+rootApp.controller('ctrlProfiles', function ($scope) {
+    $scope.message = 'Hello from ctrlProfiles Controller';
+
+    $scope.Student = ["CBSE", "ICSE", "State"];
+    $scope.Working = ["Professioinal", "Self-Employed", "Govt Employee"];
+    $scope.Retired = [];
+    $scope.Housewife = [];
+
+
+    $scope.occupationType = [
+        { type: 'Student', data: $scope.Student, displayName: 'Student' },
+         { type: 'Working', data: $scope.Working, displayName: 'MunicipalityName' },
+         { type: 'Retired', data: $scope.Retired, displayName: 'Retired' },
+         { type: 'Housewife', data: $scope.Retired, displayName: 'Retired' }
+
+    ];
+
+    $scope.createProfile = function (model) {
+        $scope.id = model.ID = Date.now();
+        model.occupation = model.occupation.type;
+        $scope.message = model;
+        //$scope.model = {};
+        writeLocalStorageJson("profile", $scope.model,true);
+
+    }
+});
+
+
+//manage profiles median score for various cognitive domains
+rootApp.controller('ctrlprofilesMedian', function ($scope) {
+    $scope.message = 'Hello from ctrlprofilesMedian Controller';
+    $scope.profilesMaster = {};
+    $scope.profiles = {};
+    //$scope.profileMedianMaster = {};
+    $scope.profileMedian = [];
+
+    $scope.fetchProfiles = function (model) {
+        $scope.profilesMaster = readLocalStorageJson("profile");
+        $scope.profiles = [];
+        for (var i = 0; i < $scope.profilesMaster.length;++i){
+            if ($scope.profilesMaster[i].occupation == model.occupation) {
+                $scope.profiles.push($scope.profilesMaster[i]);
+            }
+        }
+    }
+
+    //read operation
+    $scope.fetchProfileMedianFromRowID = function (rowID,profileName) {
+        //alert("selected row:" + rowID);
+
+        //save rowID and profileName to be used to write back later
+        $scope.rowID = rowID;
+        $scope.profileName = profileName;
+
+        //$scope.profileMedianMaster = readLocalStorageJson("PrfMedian"+profileName);
+        //$scope.profileMedian = [];
+
+        //if ($scope.profileMedianMaster)
+          //  $scope.profileMedian = $scope.profileMedianMaster[rowID];
+        //Names = sample.map(function (item) { return item.Name; });
+
+        $scope.profileMedian = readLocalStorageJson("PrfMedian-" + profileName);
+
+        if ($scope.profileMedian.length > 0) { //check if we have median array available
+            $scope.model.attention = getItemByKey("Attention",$scope.profileMedian);//$scope.profileMedian.Attention;
+            $scope.model.workingMemory = getItemByKey("WorkingMemory",$scope.profileMedian) ; 
+            $scope.model.impulsivity = getItemByKey("Impulsivity",$scope.profileMedian) ; 
+            $scope.model.mentalFlexibility = getItemByKey("MentalFlexibility", $scope.profileMedian);
+        } else {
+            $scope.model.attention = 0;
+            $scope.model.workingMemory = 0;
+            $scope.model.impulsivity = 0;
+            $scope.model.mentalFlexibility = 0;
+
+        }
+    }
+    //utility
+    function getItemByKey(key, array) {
+        var value;
+        array.some(function (obj) {
+            if (obj[key]) {
+                value = obj[key];
+                return true;
+            }
+            return false;
+        });
+        return value;
+    }
+
+
+    //write median using the rowID selected from operation fetchProfileMedianFromRowID
+    $scope.submitMedian = function (model) {
+
+        if ($scope.rowID >= 0) {
+            $scope.profileMedian = {};
+            $scope.profileMedian.Attention = model.attention;
+            $scope.profileMedian.WorkingMemory = model.workingMemory;
+            $scope.profileMedian.Impulsivity = model.impulsivity;
+            $scope.profileMedian.MentalFlexibility = model.mentalFlexibility;
+
+            writeLocalStorageJson("PrfMedian-" + $scope.profileName, $scope.profileMedian,false)
+        }
+    }
 
 });
 
@@ -185,35 +298,36 @@ rootApp.controller('ctrladminSurvey', function ($scope,$http) {
 
 rootApp.controller('ctrladminQuestions', function ($scope) {
     $scope.question = [];
+    //set the default values for the options
+    $scope.Never = 0;
+    $scope.Rarely = 1;
+    $scope.Sometimes = 2;
+    $scope.MostOften = 3;
+    $scope.Always = 4;
 
     $scope.selectMode = function (mode){
         if (mode == "create"){
             $scope.selectQ = false;
-            
-            $scope.createQuestion = function (model)
-            {
-                $scope.question = {
-                    'domain': model.domain,
-                    'qText': model.qText,
-                    'Never': model.Never,
-                    'Rarely': model.Rarely,
-                    'Sometimes': model.Sometimes,
-                    'MostOften': model.Mostoften,
-                    'Always': model.Always
-                };
-
-                $scope.message = $scope.question;
-                writeLocalStorageJson("question", $scope.question);
-            }
-    
-
         } else {
             $scope.selectQ = true;
             $scope.questions = readLocalStorageJson("question");
         }
-    };
+    }
 
-    
+    $scope.createQuestion = function (model) {
+        $scope.question = {
+            'domain': model.domain,
+            'qText': model.qText,
+            'Never': $scope.Never, //model.Never is not working,
+            'Rarely': $scope.Rarely, //model.Rarely,
+            'Sometimes': $scope.Sometimes,//model.Sometimes ,
+            'MostOften': $scope.MostOften,//model.MostOften ,
+            'Always': $scope.Always //model.Always
+        };
+
+        $scope.message = $scope.question;
+        writeLocalStorageJson("question", $scope.question,true);
+    }   
 });
 
 //rootApp.controller('ctrlAssesment', ['$scope', '$rootScope', function ($scope, $rootScope) {
@@ -255,14 +369,14 @@ rootApp.controller('ctrlAssesment', function ($scope) {
             $scope.attention = $scope.attention + score;
         }
 
-        if ($scope.assessmentQs[$scope.qIndex].domain == "Working Memory") {
+        if ($scope.assessmentQs[$scope.qIndex].domain == "WorkingMemory") {
             $scope.workingMemory = $scope.workingMemory + score;
         }
         if ($scope.assessmentQs[$scope.qIndex].domain == "Implusivity") {
             $scope.implusivity = $scope.implusivity + score;
         }
 
-        if ($scope.assessmentQs[$scope.qIndex].domain == "Mental Flexibility") {
+        if ($scope.assessmentQs[$scope.qIndex].domain == "MentalFlexibility") {
             $scope.mentalFlexibility = $scope.mentalFlexibility + score;
         }
 
@@ -287,7 +401,7 @@ rootApp.controller('ctrlAssesment', function ($scope) {
             $scope.survey.age = res.age;
             $scope.survey.created = Date(); //now().getTime().toUTCString();
             $scope.final = $scope.survey; //display the results to the user
-            writeLocalStorageJson("survey", $scope.survey);
+            writeLocalStorageJson("survey", $scope.survey,true);
 
         }
         else {
@@ -322,8 +436,9 @@ function readLocalStorageJson(key) {
     })
     */
 }
-function writeLocalStorageJson(key, arrData) {
-    key = key + "-" + Date.now();
+function writeLocalStorageJson(key, arrData,bKey) {
+    if (bKey)
+        key = key + "-" + Date.now();
     localStorage.setItem(key, JSON.stringify(arrData));
 
 
