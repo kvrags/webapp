@@ -171,52 +171,91 @@ rootApp.controller('ctrlConnectShapes', function ($scope) {
 
 // Profies
 
-rootApp.controller('ctrlProfiles', function ($scope) {
-    $scope.message = 'Hello from ctrlProfiles Controller';
+rootApp.controller('ctrlProfiles', function ($scope,$http) {
+    $scope.message = "Please fill in the above fields";
 
     $scope.Student = ["CBSE", "ICSE", "State"];
-    $scope.Working = ["Professioinal", "Self-Employed", "Govt Employee"];
+    $scope.Working = ["Professional", "Self-Employed", "Govt Employee"];
     $scope.Retired = [];
     $scope.Housewife = [];
 
 
     $scope.occupationType = [
         { type: 'Student', data: $scope.Student, displayName: 'Student' },
-         { type: 'Working', data: $scope.Working, displayName: 'MunicipalityName' },
+         { type: 'Working', data: $scope.Working, displayName: 'Working' },
          { type: 'Retired', data: $scope.Retired, displayName: 'Retired' },
          { type: 'Housewife', data: $scope.Retired, displayName: 'Retired' }
 
     ];
 
+    //profile Model
+    /*
+    Model
+    {
+        name:String,
+        ageGrou":String,
+        occupation:String,
+        stream:String,
+        cityType:String,
+    }
+    //example
+    {
+        "name":"Student_CBSE_Rural",
+        "ageGroup":"6to16",
+        "occupation":"Student",
+        "stream":"CBSE",
+        "cityType":"rural",
+        "ID":1505661846259
+    }*/
+
     $scope.createProfile = function (model) {
         $scope.id = model.ID = Date.now();
         model.occupation = model.occupation.type;
-        $scope.message = model;
+        //$scope.message = model;
         //$scope.model = {};
-        writeLocalStorageJson("profile", $scope.model,true);
+        //writeLocalStorageJson("profile", $scope.model, true);
 
+        $http.post("http://localhost:8080/profiles", model)
+        .then(function (res) {
+            $scope.model = {}; // clear the form so our user is ready to enter another
+            $scope.message = "Successfully Posted";
+            alert("Success posted new profile!" );
+
+        }, function (res) {
+            alert("Error while posting new profiles:" + res.error);
+            $scope.message = "Error:" + res.error;
+        });
     }
 });
 
 
 //manage profiles median score for various cognitive domains
-rootApp.controller('ctrlprofilesMedian', function ($scope) {
-    $scope.message = 'Hello from ctrlprofilesMedian Controller';
+rootApp.controller('ctrlprofilesMedian', function ($scope,$http) {
+    $scope.message = 'Hello from ctrlprofilesMedian Controller11';
     $scope.profilesMaster = {};
     $scope.profiles = {};
     //$scope.profileMedianMaster = {};
     $scope.profileMedian = [];
 
+    //retrieve all the profiles record
+    $http.get("http://localhost:8080/profiles")
+    .then(function (res) {
+        $scope.profilesMaster = res.data;
+        }, function (res) {
+            //failure callback
+            $scope.message = res.data;
+    });
+
+
     $scope.fetchProfiles = function (model) {
-        $scope.profilesMaster = readLocalStorageJson("profile");
+        //$scope.profilesMaster = readLocalStorageJson("profile");
         $scope.profiles = [];
-        for (var i = 0; i < $scope.profilesMaster.length;++i){
+        for (var i = 0; i < $scope.profilesMaster.length; ++i) {
             if ($scope.profilesMaster[i].occupation == model.occupation) {
                 $scope.profiles.push($scope.profilesMaster[i]);
             }
         }
     }
-
     //read operation
     $scope.fetchProfileMedianFromRowID = function (rowID,profileName) {
         //alert("selected row:" + rowID);
@@ -271,7 +310,9 @@ rootApp.controller('ctrlprofilesMedian', function ($scope) {
             $scope.profileMedian.Impulsivity = model.impulsivity;
             $scope.profileMedian.MentalFlexibility = model.mentalFlexibility;
 
-            writeLocalStorageJson("PrfMedian-" + $scope.profileName, $scope.profileMedian,false)
+            //writeLocalStorageJson("PrfMedian-" + $scope.profileName, $scope.profileMedian,false);
+
+
         }
     }
 
@@ -296,7 +337,7 @@ rootApp.controller('ctrladminSurvey', function ($scope,$http) {
 
 });
 
-rootApp.controller('ctrladminQuestions', function ($scope) {
+rootApp.controller('ctrladminQuestions', function ($scope, $http) {
     $scope.question = [];
     //set the default values for the options
     $scope.Never = 0;
@@ -310,7 +351,18 @@ rootApp.controller('ctrladminQuestions', function ($scope) {
             $scope.selectQ = false;
         } else {
             $scope.selectQ = true;
-            $scope.questions = readLocalStorageJson("question");
+            //$scope.questions = readLocalStorageJson("question");
+
+
+            $http.get('http://localhost:8080/questions')
+                .then(function (res) {
+                    $scope.questions = res.data;
+                },
+                function (res) {
+                    //failure callback
+                    $scope.questions = res.data
+                });
+
         }
     }
 
@@ -318,16 +370,24 @@ rootApp.controller('ctrladminQuestions', function ($scope) {
         $scope.question = {
             'domain': model.domain,
             'qText': model.qText,
-            'Never': $scope.Never, //model.Never is not working,
+            'Never': $scope.Never, 
             'Rarely': $scope.Rarely, //model.Rarely,
             'Sometimes': $scope.Sometimes,//model.Sometimes ,
             'MostOften': $scope.MostOften,//model.MostOften ,
             'Always': $scope.Always //model.Always
         };
 
-        $scope.message = $scope.question;
-        writeLocalStorageJson("question", $scope.question,true);
-    }   
+        //$scope.message = $scope.question;
+        //writeLocalStorageJson("question", $scope.question,true);
+        
+        $http.post("http://localhost:8080/questions", $scope.question)
+        .then (function (res){
+            $scope.question = {}; // clear the form so our user is ready to enter another
+            $scope.message = "Successfully Posted";
+        }, function (res){
+            $scope.message = "Error:" + res.error;
+        });
+    }
 });
 
 //rootApp.controller('ctrlAssesment', ['$scope', '$rootScope', function ($scope, $rootScope) {
